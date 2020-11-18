@@ -4,7 +4,7 @@ const glob = require('glob');
 const decompress = require('decompress');
 const decompressUnzip = require('decompress-unzip');
 const decompressTargz = require('decompress-targz');
-const { spawn } = require('cross-spawn');
+const { spawn } = require('child_process');
 
 var cli_path = ""
 var cli_name = ""
@@ -135,7 +135,7 @@ function decompressCLI(win) {
 }
 
 function libraryInstall(win, config, args) {
-    win.webContents.send("console", "Installing Arduino libraries...")
+    win.webContents.send("console", "Installing Arduino libraries..." + config[ args["flavor"] ][ "boards" ][ args["board"] ][ "libraries" ])
 
     const libs = config[ args["flavor"] ][ "boards" ][ args["board"] ][ "libraries" ] 
     var libstring = ""
@@ -144,7 +144,7 @@ function libraryInstall(win, config, args) {
     });
 
     return new Promise((resolve, reject) => {
-        var cmd = spawn("arduino-cli lib install " + libstring, [], { cwd: cli_path + cli_name })
+        var cmd = spawn("arduino-cli", [ 'lib',  'install',  libs[0] ], { cwd: cli_path + cli_name })
 
         cmd.on('exit', () => {
             win.webContents.send("console", "Finished installing Arduino libraries: " + libstring)
@@ -157,6 +157,10 @@ function libraryInstall(win, config, args) {
         cmd.stderr.on('data', (data) => {
             console.log(data.toString());
             win.webContents.send("console", data)
+        })
+        cmd.on('error', (error) => {
+            console.log(error.toString());
+            win.webContents.send("console", error)
         })
     })
 }

@@ -4,6 +4,7 @@ const configWriter = require('./configWriter')
 const { ipcMain } = require('electron')
 const fs = require('fs')
 const isDev = require('electron-is-dev');
+if (require('electron-squirrel-startup')) return;
 
 function createWindow () {
   // Create the browser window.
@@ -95,11 +96,11 @@ function createWindow () {
                             var path_to_fw = ""
                             if(process.platform === 'win32') {
                                 if(isDev) path_to_fw = __dirname + "\\extraResources\\"
-                                else path_to_fw = process.resourcesPath + "\\extraResources\\"
+                                else path_to_fw = __dirname + "\\extraResources\\"
                             }
                             else {
                                 if(isDev) path_to_fw = __dirname + "/extraResources/"
-                                else path_to_fw = process.resourcesPath + "/extraResources/"
+                                else path_to_fw = __dirname + "/extraResources/"
                             }
 
                             if(arg["flavor"] === "CommandStation-EX") {

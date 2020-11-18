@@ -18,10 +18,9 @@
   },
   "license": "MIT",
   "build": {
-    "extraFiles": [
-      "**/extraResources/**"
-    ],
-    "asar": true
+    "extraResources": [
+      "**/extraResources/**/*"
+    ]
   },
   "config": {
     "forge": {
