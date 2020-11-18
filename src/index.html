@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>FireBox Installer</title>
+    <!-- https://electronjs.org/docs/tutorial/security#csp-meta-tag -->
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <h1 class="title">FireBox Installer</h1>
+    <p>Welcome to the FireBox installer. Please select the configuration below, then click "flash" 
+        to install the necessary tools, compile, and upload the firmware.</p>
+    <div class="flex-container">
+        <div>
+            <button id="scan">Scan COM Ports</button>
+            <select id="flavor" required class="select">
+                <option value="CommandStation-EX">CommandStation-EX</option>
+            </select></br>
+            <select id="board-version" required class="select">
+                <option value="arduino:avr:uno">Arduino Uno</option>
+                <option value="arduino:avr:mega">Arduino Mega</option>
+                <option value="arduino:avr:nano">Arduino Nano</option>
+            </select></br>
+            <select id="port" required class="select">
+
+            </select></br>
+            <button id="flash" onclick="submit_form()">Flash Now!</button>
+        </div>
+        <div id="output" style="width: auto; min-width: 400px;"></div>
+
+        <script>
+            const {ipcRenderer} = require('electron')
+            
+            function submit_form() {
+                var flavor = document.getElementById('flavor').value 
+                var board_version = document.getElementById('board-version').value
+                var port = document.getElementById('port').value
+                ipcRenderer.send("flash", [flavor, board_version, port])
+            }
+            
+            const port_button = document.getElementById("scan")
+            port_button.addEventListener('click', () => {
+                ipcRenderer.send("refresh")
+            })
+
+            ipcRenderer.on("refresh", (event, args) => {
+                console.log(args);
+
+                const port_select = document.getElementById("port");
+                for(i = port_select.options.length - 1; i >= 0; i--) {
+                    port_select.remove(i);
+                }
+                args.forEach((port) => {
+                    var opt = document.createElement('option');
+                    opt.appendChild(document.createTextNode(port.name + " (" + port.man + ")"))
+                    opt.value = port.name;
+                    port_select.appendChild(opt);
+                })
+            })
+
+            var lastTag = null
+
+            ipcRenderer.on("console", (event, args) => {
+                console.log(args)
+                console.log(event)
+                var user_console = document.getElementById("output")
+                var newTag = document.createElement("div")
+                newTag.appendChild(document.createTextNode(args.toString()))
+                user_console.insertBefore(newTag, lastTag)
+                lastTag = newTag
+            })
+
+        </script>
+    </div>
+
+  </body>
+</html>

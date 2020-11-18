@@ -1,0 +1,38 @@
+@font-face {
+    font-family: Audiowide;
+    src: url('Audiowide-Regular.ttf');
+}  
+
+@font-face {
+    font-family: Flamenco;
+    src: url('Flamenco-Regular.ttf');
+}
+
+body {
+    font-family: Flamenco;
+    max-width: 800px;
+    min-width: 400px;
+    margin: auto;
+    margin-left: 8pt;
+    margin-right: 8pt;
+}
+
+.title {
+    font-family: Audiowide;
+    text-align: center;
+    text-decoration: underline;
+}
+
+.flex-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+    margin: 8pt;
+    flex-wrap: wrap;
+}
+
+.select{
+    width:fit-content;  
+    min-width: 200px; 
+}
