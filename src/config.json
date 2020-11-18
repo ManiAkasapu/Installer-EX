@@ -1,0 +1,108 @@
+{
+    "CommandStation-EX": {
+        "boards": {
+            "mega": {
+                "name": "Arduino Mega",
+                "core": "arduino:avr",
+                "id": "arduino:avr:mega",
+                "libraries": [
+                    "LiquidCrystal",
+                    "\"Adafruit SSD1306\"",
+                    "Ethernet",
+                    "DIO2"
+                ]
+            },
+            "uno": {
+                "name": "Arduino Uno",
+                "core": "arduino:avr",
+                "id": "arduino:avr:uno",
+                "libraries": [
+                    "LiquidCrystal",
+                    "\"Adafruit SSD1306\"",
+                    "Ethernet",
+                    "DIO2"
+                ]   
+            },
+            "nano": {
+                "name": "Arduino Nano",
+                "core": "arduino:avr",
+                "id": "arduino:avr:nano",
+                "libraries": [
+                    "LiquidCrystal",
+                    "\"Adafruit SSD1306\"",
+                    "Ethernet",
+                    "DIO2"
+                ]
+            }
+        },
+        "motor_boards": {
+            "standard_shield": { 
+                "name": "Arduino/Deek-Robot Shield",
+                "id": "STANDARD_MOTOR_SHIELD",
+                "description": "Arduino/Deek-robot motor shield based on the L298 with 18V 2A per channel"          
+            },
+            "pololu_shield": { 
+                "name": "Pololu MC33926 Shield",
+                "id": "POLOLU_MOTOR_SHIELD",
+                "description": "Pololu MC33926 Motor Driver (not recommended for prog track)"          
+            },
+            "fundumoto_shield": { 
+                "name": "Fundumoto Shield",
+                "id": "FUNDUMOTO_SHIELD",
+                "description": "Fundumoto Shield, no current sensing (not recommended, no short protection)"          
+            }
+        },
+        "build-sequence": [
+            "lockOptions",
+            "configWrite",
+            "downloadCLI",
+            "decompressCLI",
+            "libraryInstall",
+            "coreInstall",
+            "upload",
+            "unlockOptions"
+        ]
+    },
+    "BaseStation-Classic": {
+        "boards": {
+            "mega": {
+                "name": "Arduino Mega",
+                "core": "arduino:avr",
+                "id": "arduino:avr:mega",
+                "libraries": [
+                    "Ethernet"
+                ]
+            },
+            "uno": {
+                "name": "Arduino Uno",
+                "core": "arduino:avr",
+                "id": "arduino:avr:uno",
+                "libraries": [
+                    "Ethernet"
+                ]       
+            }
+        },
+        "motor_boards": {
+            "standard_shield": { 
+                "name": "Arduino/Deek-Robot Shield",
+                "id": "0",
+                "description": "Arduino/Deek-robot motor shield based on the L298 with 18V 2A per channel"          
+            },
+            "pololu_shield": { 
+                "name": "Pololu MC33926 Shield",
+                "id": "1",
+                "description": "Pololu MC33926 Motor Driver (not recommended for prog track)"          
+            }
+        },
+        "build-sequence": [
+            "lockOptions",
+            "configWrite",
+            "downloadCLI",
+            "decompressCLI",
+            "libraryInstall",
+            "coreInstall",
+            "upload",
+            "unlockOptions"
+        ]
+    }
+}

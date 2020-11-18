@@ -11,7 +11,7 @@ function createWindow () {
         width: 800,
         height: 600,
         webPreferences: {
-        nodeIntegration: true
+            nodeIntegration: true
         }
     })
 
@@ -24,35 +24,94 @@ function createWindow () {
 
     ipcMain.on("flash", (event, arg) => {
         if(event.frameId === win.id) {
-            console.log(arg)
-    
-            arduinoInterface.downloadCLI()
-            .then(() => {
-                arduinoInterface.decompressCLI()
-            }).then(() => {
-                if(process.platform === 'win32') {
-                    downloadManager.clonePublicRepo("https://github.com/DCC-EX/" + arg[0] + ".git", '.\\git')
-                }
-                else {
-                    downloadManager.clonePublicRepo("https://github.com/DCC-EX/" + arg[0] + ".git", './git')
-                }
-            }).then(() => {
-                configWriter.configWrite(arg)
-            }).then(() => {
-                if(process.platform === 'win32') {
-                    arduinoInterface.coreInstall(win, "arduino:avr")
-                }
-                else {
-                    arduinoInterface.coreInstall(win, "arduino:avr")
-                }
-            }).then(() => {
-                if(process.platform === 'win32') {
-                    arduinoInterface.upload(win, arg[1], "..\\..\\git\\CommandStation-EX", arg[2])
-                }
-                else {
-                    arduinoInterface.upload(win, arg[1], "../../git/CommandStation-EX", arg[2])
-                }
+            
+            var rawdata = fs.readFileSync("./src/config.json")
+            var config = JSON.parse(rawdata)
+            var sequence = config[arg["flavor"]]["build-sequence"]
+
+            console.log("Settings: " + arg)    
+            console.log("Build sequence: " + config[arg["flavor"]]["build-sequence"])
+            
+            var sequencePromise = new Promise((resolve, reject) => {
+                resolve()
             })
+
+            sequence.forEach(element => {
+                switch (element) {
+                    case "lockOptions":
+                        sequencePromise = sequencePromise.then(() => {
+                            
+                            // TODO: Replace this with lockOptions directive 
+
+                            return new Promise((resolve, reject) => {
+                                resolve()
+                            })
+                        })
+                        break;
+                    case "configWrite":
+                        sequencePromise = sequencePromise.then(() => {
+                            return configWriter.configWrite(win, arg, config)
+                        })
+                        break;
+                    case "downloadCLI":
+                        sequencePromise = sequencePromise.then(() => {
+                            return arduinoInterface.downloadCLI(win)
+                        })
+                        break;
+                    case "decompressCLI":
+                        sequencePromise = sequencePromise.then(() => {
+                            return arduinoInterface.decompressCLI(win)
+                        })
+                        break;
+                    case "libraryInstall":
+                        sequencePromise = sequencePromise.then(() => {
+                            return arduinoInterface.libraryInstall(win, config, arg)
+                        })
+                        break;
+                    case "coreInstall":
+                        sequencePromise = sequencePromise.then(() => {
+
+                            // TODO: Refactor to accept all args.
+                            return arduinoInterface.coreInstall(win, arg["board"])
+                        })
+                        break;
+                    case "upload":
+                        sequencePromise = sequencePromise.then(() => {
+                            if(arg["flavor"] === "CommandStation-EX") {
+                                if(process.platform === 'win32') {
+                                    return arduinoInterface.upload(win, arg["board"], "..\\..\\firmware\\" + arg["flavor"], arg["port"])
+                                }
+                                else {
+                                    return arduinoInterface.upload(win, arg["board"], "../../firmware/" + arg["flavor"], arg["port"])
+                                }
+                            } else if(arg["flavor"] === "BaseStation-Classic") {
+                                if(process.platform === 'win32') {
+                                    return arduinoInterface.upload(win, arg["board"], "..\\..\\firmware\\" + arg["flavor"] + "\\DCCpp", arg["port"])
+                                }
+                                else {
+                                    return arduinoInterface.upload(win, arg["board"], "../../firmware/" + arg["flavor"] + "/DCCpp", arg["port"])
+                                }
+                            } else {
+                                console.log("Invalid flavor")
+                            }
+                        })
+                        break;
+                    case "unlockOptions":
+                        sequencePromise = sequencePromise.then(() => {
+                                
+                            // TODO: Replace this with unlockOptions directive 
+
+                            return new Promise((resolve, reject) => {
+                                resolve()
+                            })
+                        })
+                        break;
+                    
+                    default:
+                        console.log("WARNING: invalid sequence option")
+                        break;
+                }
+            });
         }
     })    
 }
