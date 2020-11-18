@@ -1,4 +1,5 @@
 const write = require('write');
+const isDev = require('electron-is-dev');
 
 function configWrite(win, args, config) {
     win.webContents.send("console", "Writing config file...")
@@ -43,12 +44,22 @@ function configWrite(win, args, config) {
         }
 
         var path = ""
-    
+        var path_to_fw = ""
+
         if(process.platform === 'win32') {
-            path = '.\\firmware\\' + args["flavor"] + '\\config.h'
+            if(isDev) path_to_fw = __dirname + "\\extraResources\\"
+            else path_to_fw = process.resourcesPath + "\\extraResources\\"
         }
         else {
-            path = './firmware/' + args["flavor"] + '/config.h'
+            if(isDev) path_to_fw = __dirname + "/extraResources/"
+            else path_to_fw = process.resourcesPath + "/extraResources/"
+        }
+    
+        if(process.platform === 'win32') {
+            path = path_to_fw + args["flavor"] + '\\config.h'
+        }
+        else {
+            path = path_to_fw + args["flavor"] + '/config.h'
         }
     }
     else if(args["flavor"] === "BaseStation-Classic") {
@@ -76,12 +87,22 @@ function configWrite(win, args, config) {
 
 
         var path = ""
-    
+        var path_to_fw = ""
+
         if(process.platform === 'win32') {
-            path = '.\\firmware\\' + args["flavor"] + '\\DCCpp\\Config.h'
+            if(isDev) path_to_fw = __dirname + "\\extraResources\\"
+            else path_to_fw = process.resourcesPath + "\\extraResources\\"
         }
         else {
-            path = './firmware/' + args["flavor"] + '/DCCpp/Config.h'
+            if(isDev) path_to_fw = __dirname + "/extraResources/"
+            else path_to_fw = process.resourcesPath + "/extraResources/"
+        }
+    
+        if(process.platform === 'win32') {
+            path = path_to_fw + args["flavor"] + '\\DCCpp\\Config.h'
+        }
+        else {
+            path = path_to_fw + args["flavor"] + '/DCCpp/Config.h'
         }
     }
 

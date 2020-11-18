@@ -4,3 +4,9 @@
 [submodule "CommandStation-EX"]
 	path = CommandStation-EX
 	url = https://github.com/DCC-EX/CommandStation-EX.git
+[submodule "src/extraResources/CommandStation-EX"]
+	path = src/extraResources/CommandStation-EX
+	url = https://github.com/DCC-EX/CommandStation-EX.git
+[submodule "src/extraResources/BaseStation-Classic"]
+	path = src/extraResources/BaseStation-Classic
+	url = https://github.com/DCC-EX/BaseStation-Classic.git

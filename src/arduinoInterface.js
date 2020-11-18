@@ -5,11 +5,6 @@ const decompress = require('decompress');
 const decompressUnzip = require('decompress-unzip');
 const decompressTargz = require('decompress-targz');
 const { spawn } = require('cross-spawn');
-const path = require('path');
-
-var rawdata = fs.readFileSync("./src/config.json")
-var config = JSON.parse(rawdata);
-console.log(config)
 
 var cli_path = ""
 var cli_name = ""
@@ -166,7 +161,7 @@ function libraryInstall(win, config, args) {
     })
 }
 
-function coreInstall(win, board) {
+function coreInstall(win, board, config) {
     win.webContents.send("console", "Checking for Arduino core installation: " + config["CommandStation-EX"]["boards"][board]["core"])
 
     return new Promise((resolve, reject) => {
@@ -188,7 +183,7 @@ function coreInstall(win, board) {
     })
 }
 
-function upload(win, board, sketch, port) {
+function upload(win, board, sketch, port, config) {
     win.webContents.send("console", "Uploading to " + config["CommandStation-EX"]["boards"][board]["id"] + " on " + port + "...")
 
     return new Promise((resolve, reject) => {

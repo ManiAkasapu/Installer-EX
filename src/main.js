@@ -1,9 +1,9 @@
 const { app, BrowserWindow } = require('electron')
 const arduinoInterface = require("./arduinoInterface")
-const downloadManager = require('./downloadManager')
 const configWriter = require('./configWriter')
 const { ipcMain } = require('electron')
 const fs = require('fs')
+const isDev = require('electron-is-dev');
 
 function createWindow () {
   // Create the browser window.
@@ -19,13 +19,28 @@ function createWindow () {
     win.loadFile('./src/index.html')
 
     // Open the DevTools.
-    win.webContents.openDevTools()
+    // win.webContents.openDevTools()
 
 
     ipcMain.on("flash", (event, arg) => {
         if(event.frameId === win.id) {
-            
-            var rawdata = fs.readFileSync("./src/config.json")
+
+            var rawdata = ""
+            if(process.platform === 'win32') {
+                try {
+                    rawdata = fs.readFileSync(__dirname + "\\extraResources\\config.json")
+                } catch (err) {
+                    rawdata = fs.readFileSync(process.resourcesPath + "\\extraResources\\config.json")
+                }
+            }
+            else {
+                try {
+                    rawdata = fs.readFileSync(__dirname + "/extraResources/config.json")
+                } catch (err) {
+                    rawdata = fs.readFileSync(process.resourcesPath + "/extraResources/config.json")
+                }
+            }
+
             var config = JSON.parse(rawdata)
             var sequence = config[arg["flavor"]]["build-sequence"]
 
@@ -72,24 +87,34 @@ function createWindow () {
                         sequencePromise = sequencePromise.then(() => {
 
                             // TODO: Refactor to accept all args.
-                            return arduinoInterface.coreInstall(win, arg["board"])
+                            return arduinoInterface.coreInstall(win, arg["board"], config)
                         })
                         break;
                     case "upload":
                         sequencePromise = sequencePromise.then(() => {
+                            var path_to_fw = ""
+                            if(process.platform === 'win32') {
+                                if(isDev) path_to_fw = __dirname + "\\extraResources\\"
+                                else path_to_fw = process.resourcesPath + "\\extraResources\\"
+                            }
+                            else {
+                                if(isDev) path_to_fw = __dirname + "/extraResources/"
+                                else path_to_fw = process.resourcesPath + "/extraResources/"
+                            }
+
                             if(arg["flavor"] === "CommandStation-EX") {
                                 if(process.platform === 'win32') {
-                                    return arduinoInterface.upload(win, arg["board"], "..\\..\\firmware\\" + arg["flavor"], arg["port"])
+                                    return arduinoInterface.upload(win, arg["board"], path_to_fw + arg["flavor"], arg["port"], config)
                                 }
                                 else {
-                                    return arduinoInterface.upload(win, arg["board"], "../../firmware/" + arg["flavor"], arg["port"])
+                                    return arduinoInterface.upload(win, arg["board"], path_to_fw + arg["flavor"], arg["port"], config)
                                 }
                             } else if(arg["flavor"] === "BaseStation-Classic") {
                                 if(process.platform === 'win32') {
-                                    return arduinoInterface.upload(win, arg["board"], "..\\..\\firmware\\" + arg["flavor"] + "\\DCCpp", arg["port"])
+                                    return arduinoInterface.upload(win, arg["board"], path_to_fw + arg["flavor"] + "\\DCCpp", arg["port"], config)
                                 }
                                 else {
-                                    return arduinoInterface.upload(win, arg["board"], "../../firmware/" + arg["flavor"] + "/DCCpp", arg["port"])
+                                    return arduinoInterface.upload(win, arg["board"], path_to_fw + arg["flavor"] + "/DCCpp", arg["port"], config)
                                 }
                             } else {
                                 console.log("Invalid flavor")
@@ -142,8 +167,6 @@ app.on('activate', () => {
 // code. You can also put them in separate files and require them here.
 
 const serialPortManager = require('./serialPortManager');
-const { default: simpleGit } = require('simple-git')
-const { fstat } = require('fs')
 
 ipcMain.on("refresh", (event, arg) => {
     console.log("Refresh")
