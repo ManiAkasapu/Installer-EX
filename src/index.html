@@ -5,67 +5,218 @@
     <title>DCC++ EX Installer-EX</title>
     <!-- https://electronjs.org/docs/tutorial/security#csp-meta-tag -->
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
-    <link rel="stylesheet" href="styles.css"/>
     <link rel="stylesheet" href="../node_modules/xterm/css/xterm.css"/>
+    <link rel="stylesheet" href="styles.css"/>
     <script src="../node_modules/xterm/lib/xterm.js"></script>
   </head>
   <body>
-    <h1 class="title">DCC++ EX Installer-EX</h1>
-    <p>Welcome to the installer. Please select the configuration below, then click "flash" 
-        to install the necessary tools, compile, and upload the firmware.</p>
-    <div class="flex-container">
-        <div>
-            <button id="scan" autofocus>Scan COM Ports</button></br>
-            Firmware Type: <select id="flavor" required class="select">
-                <option value="CommandStation-EX">CommandStation-EX</option>
-                <option value="BaseStation-Classic">BaseStation-Classic</option>
-            </select></br>
-            Microcontroller Board: <select id="board" required class="select">
-                <option value="uno">Arduino Uno</option>
-                <option value="mega">Arduino Mega</option>
-                <option value="nano">Arduino Nano</option>
-            </select></br>
-            Port: <select id="port" required class="select">
+    <!-- <h1 class="title">DCC++ EX Installer-EX</h1> -->
 
-            </select></br>
-            Motor Board: <select id="motor_shield_type" required class="select">
-                <option value="standard_shield">Arduino/Deek-Robot Shield</option>
-                <option value="pololu_shield">Pololu MC33926 Shield</option>
-            </select></br>
-            Port: <input id="ip_port" type="text" placeholder="2560" size=5 step=1 maxlength=5 min=0 max=65353></input></br>
-            WiFi Enable: <input id="wifi_enable" type="checkbox"/></br>
-            Don't Touch WiFi Config: <input id="dont_touch_wifi_conf" type="checkbox"/></br>
-            WiFi SSID: <input id="wifi_ssid" type="text" placeholder="SSID" size=32 maxlength=32></input></br>
-            WiFi Password: <input id="wifi_password" type="text" placeholder="Password" size=63 minlength=8 maxlength=32></input></br>
-            WiFi Hostname: <input id="wifi_hostname" type="text" placeholder="Hostname" size=32 maxlength=32></input></br>
-            Ethernet Enable: <input id="ethernet_enable" type="checkbox"/></br>
-            Use DHCP: <input id="use_dhcp" type="checkbox"/></br>
-            IP Address: <input id="ip1" type="text" placeholder="192" size=3 step=1 maxlength=3 min=0 max=255></input>
-            <input id="ip2" type="text" placeholder="168" size=3 step=1 maxlength=3 min=0 max=255></input>
-            <input id="ip3" type="text" placeholder="1" size=3 step=1 maxlength=3 min=0 max=255></input>
-            <input id="ip4" type="text" placeholder="200" size=3 step=1 maxlength=3 min=0 max=255></input></br>
-            MAC Address: <input id="mac1" type="text" placeholder="0xDE" size=4 maxlength=4></input>
-            <input id="mac2" type="text" placeholder="0xAD" size=4 maxlength=4></input>
-            <input id="mac3" type="text" placeholder="0xBE" size=4 maxlength=4></input>
-            <input id="mac4" type="text" placeholder="0xEF" size=4 maxlength=4></input>
-            <input id="mac5" type="text" placeholder="0xFE" size=4 maxlength=4></input>
-            <input id="mac6" type="text" placeholder="0xEF" size=4 maxlength=4></input></br>
-            Enable Free Mem Warning: <input id="enable_free_mem_warning" type="checkbox"/></br>
-            LCD Enable: <input id="lcd_enable" type="checkbox"/></br>
-            LCD Address: <input id="lcd_address" type="text" placeholder="0x3F" size=4 maxlength=4></input></br>
-            LCD Rows: <input id="lcd_rows" type="text" placeholder="16" size=2 step=1 maxlength=2 min=1></input></br>
-            LCD Columns: <input id="lcd_columns" type="text" placeholder="2" size=2 step=1 maxlength=2 min=1></input></br>
-            OLED Enable: <input id="oled_enable" type="checkbox"/></br>
-            OLED Width: <input id="oled_width" type="text" placeholder="128" size=3 step=1 maxlength=3 min=1></input></br>
-            OLED Height: <input id="oled_height" type="text" placeholder="32" size=3 step=1 maxlength=3 min=1></input></br>
-            <button id="flash" onclick="submit_form()">Flash Now!</button>
-        </div>
-        <div id="terminal" style="width: auto; min-width: 400px;">
+    <main class="container">
+
+      <aside class="side-panel">
+          <img class="ex-logo" alt="Dcc++ EX logo" src="dccex_logo.svg"/>
+          <ul>
+              <li class="step done" id="welcome">
+                <span class="indicator"></span>
+                <span class="label">Welcome</span>
+              </li>
+              <li class="step active" id="config">
+                <span class="indicator"></span>
+                <span class="label">Configuartion</span>
+              </li>
+              <li class="step" id="terminal">
+                <span class="indicator"></span>
+                <span class="label">Installation</span>
+              </li>
+              <li class="step" id="finish">
+                <span class="indicator"></span>
+                <span class="label">Finish</span>
+              </li>
+          </ul>
+      </aside>
+      <div class="content" id="section-content">
         
-        </div>
+        <section class="section" id="section-welcome">
+          <div>
+            <div class="section-header">
+              <h3>Welcome to the installer</h3>
+            </div>
+            <p>Select the configuration below, then click "flash" to install 
+              the necessary tools, compile, and upload the firmware.
+            </p>
+          </div>
+          <footer>
+            <button class="btn primary rounded"  autofocus>Next</button>
+          </footer>
+        </section>
 
-        <script src="index.js"></script>
-    </div>
+        <section class="section" id="section-config">
+          <div class="section-header">
+            <h3>Configuration</h3>
+          </div>
+          <div class="config-container">
+              <form>            
+                <div class="form-section" id="form-basic">           
+                  <div class="form-row">
+                    <div class="scan-btn-container align-right">
+                      <button class="btn" id="scan" autofocus>Scan COM Ports</button>
+                    </div>
+                    <label for="flavor">Firmware Type:</label> 
+                    <select id="flavor" required class="select">
+                        <option value="CommandStation-EX">CommandStation-EX</option>
+                        <option value="BaseStation-Classic">BaseStation-Classic</option>
+                    </select>
+                  </div>
+                  <div class="form-row">
+                    <label for="board">Microcontroller Board: </label>
+                    <select id="board" required class="select">
+                        <option value="uno">Arduino Uno</option>
+                        <option value="mega">Arduino Mega</option>
+                        <option value="nano">Arduino Nano</option>
+                    </select>
+                  </div>
+                  <div class="form-row">
+                    <label for="flavor">Port: </label>
+                    <select id="port" required class="select"></select>
+                  </div>
+                  <div class="form-row">
+                    <label for="motor_shield_type"> Motor Board: </label>
+                    <select id="motor_shield_type" required class="select">
+                        <option value="standard_shield">Arduino/Deek-Robot Shield</option>
+                        <option value="pololu_shield">Pololu MC33926 Shield</option>
+                    </select>
+                  </div>
+                  <div class="form-row">
+                    <label for="motor_shield_type"> Port: </label>
+                    <input class="input-md" id="ip_port" type="text" placeholder="2560" size=5 step=1 maxlength=5 min=0 max=65353></input>
+                  </div>
+                </div>
+                <div class="form-section" id="form-network">
+                    <div class="form-row">
+                      <label for="wifi_enable"> WiFi Enable: </label>
+                      <input class="input-md" id="wifi_enable" type="checkbox"/>
+                    </div>
+                    <div class="form-row">
+                          <label for="wifi_enable">Don't Touch WiFi Config: </label>
+                          <input class="input-md" id="dont_touch_wifi_conf" type="checkbox"/>
+                    </div>
+                    <div class="form-row">
+                          <label for="wifi_enable">WiFi SSID: </label>
+                          <input class="input-md" id="wifi_ssid" type="text" placeholder="SSID" size=32 maxlength=32></input>
+                    </div>
+                    <div class="form-row">
+                          <label for="wifi_enable">WiFi Password: </label>
+                          <input class="input-md" id="wifi_password" type="text" placeholder="Password" size=63 minlength=8 maxlength=32></input>
+                    </div>
+                    <div class="form-row">
+                          <label for="wifi_enable">WiFi Hostname: </label>
+                          <input class="input-md" id="wifi_hostname" type="text" placeholder="Hostname" size=32 maxlength=32></input>
+                    </div>
+                    <div class="form-row">
+                          <label for="wifi_enable">Ethernet Enable:</label>
+                          <input class="input-md" id="ethernet_enable" type="checkbox"/>
+                    </div>
+                    <div class="form-row">
+                          <label for="wifi_enable">Use DHCP: </label>
+                          <input class="input-md" id="use_dhcp" type="checkbox"/>
+                    </div>
+                    <div class="form-row">
+                          <label for="wifi_enable">IP Address: </label>
+                          <input id="ip1" class="input-sm" type="text" placeholder="192" size=3 step=1 maxlength=3 min=0 max=255></input>
+                          <input id="ip2" class="input-sm" type="text" placeholder="168" size=3 step=1 maxlength=3 min=0 max=255></input>
+                          <input id="ip3" class="input-sm" type="text" placeholder="1" size=3 step=1 maxlength=3 min=0 max=255></input>
+                          <input id="ip4" class="input-sm" type="text" placeholder="200" size=3 step=1 maxlength=3 min=0 max=255></input>
+                    </div>
+                    <div class="form-row">
+                          <label for="wifi_enable">MAC Address: </label>
+                          <input id="mac1" class="input-sm" type="text" placeholder="0xDE" size=4 maxlength=4></input>
+                          <input id="mac2" class="input-sm" type="text" placeholder="0xAD" size=4 maxlength=4></input>
+                          <input id="mac3" class="input-sm" type="text" placeholder="0xBE" size=4 maxlength=4></input>
+                          <input id="mac4" class="input-sm" type="text" placeholder="0xEF" size=4 maxlength=4></input>
+                          <input id="mac5" class="input-sm" type="text" placeholder="0xFE" size=4 maxlength=4></input>
+                          <input id="mac6" class="input-sm" type="text" placeholder="0xEF" size=4 maxlength=4></input>
+                    </div>
+                </div>
+                <div class="form-section" id="form-display">
+                  <div class="form-row">
+                        <label for="wifi_enable">Enable Free Mem Warning: </label>
+                        <input id="enable_free_mem_warning" type="checkbox"/>
+                  </div>
+                  <div class="form-row">
+                        <label for="wifi_enable">LCD Enable: </label>
+                        <input id="lcd_enable" type="checkbox"/>
+                  </div>
+                  <div class="form-row">
+                        <label for="wifi_enable">LCD Address: </label>
+                        <input class="input-sm" id="lcd_address" type="text" placeholder="0x3F" size=4 maxlength=4></input>
+                  </div>
+                  <div class="form-row">
+                        <label for="wifi_enable">LCD Rows: </label>
+                        <input class="input-sm" id="lcd_rows" type="text" placeholder="16" size=2 step=1 maxlength=2 min=1></input>
+                  </div>
+                  <div class="form-row">
+                        <label for="wifi_enable">LCD Columns:</label>
+                        <input class="input-sm" id="lcd_columns" type="text" placeholder="2" size=2 step=1 maxlength=2 min=1></input>
+                  </div>
+                  <div class="form-row">
+                        <label for="wifi_enable">OLED Enable: </label>
+                        <input id="oled_enable" type="checkbox"/>
+                  </div>
+                  <div class="form-row">
+                        <label for="wifi_enable">OLED Width: </label>
+                        <input class="input-sm" id="oled_width" type="text" placeholder="128" size=3 step=1 maxlength=3 min=1></input>    
+                  </div>
+                  <div class="form-row">
+                        <label for="wifi_enable">OLED Height: </label>
+                        <input class="input-sm" id="oled_height" type="text" placeholder="32" size=3 step=1 maxlength=3 min=1></input>
+                  </div>
+                </div>
+                <!-- <div class="form-row submit-button">
+                  <button class="btn" id="flash" onclick="submit_form()">Flash Now!</button>
+                </div> -->
+              </form>
+          </div>
+          <footer>
+            <button class="btn primary rounded" id="flash" onclick="submit_form()">Flash Now!</button>
+          </footer>
+        </section>
 
+        <section class="section" id="section-terminal">
+          <div class="section-header">
+            <h3>Installation in Progress..</h3>
+          </div>
+          <div class="terminal-container">
+            <div id="terminal" class="terminal">
+            </div>
+            <div id="progress-bar" class="progress-content">
+              <div class="bar">
+                <div class="progress" style="width: 30%"></div>
+              </div>
+            </div>
+          </div>
+          <footer>
+            <button class="btn rounded bordered" disabled>Installing</button>
+          </footer>
+        </section>
+
+        <section class="section" id="section-finish">
+          <div>
+            <div class="section-header">
+                <h3>Thank you</h3>
+          </div>
+            <p>
+              Thanks for supporting us..
+            </p>
+          </div>
+          <footer>
+            <button class="btn primary rounded">Finish</button>
+          </footer>
+        </section>
+
+      </div>
+
+    </main>
+  <script src="index.js"></script>
   </body>
 </html>
